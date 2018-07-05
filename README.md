@@ -44,7 +44,7 @@ ImageZipUtil.compressByJNI(bitmap, fromJniFlaseFile.getAbsolutePath(), false);
 ```
 
 ### 其他
-1.如果你觉得包太大了，因为这里面有armeabi和armeabi-v7a的包，如果你只要其中之一，可以把demo 下载下来，删除libs包中的其中之一就可
+1.如果你觉得包太大了，因为这里面有armeabi和armeabi-v7a的包，如果你只要其中之一，可以把demo 下载下来，删除libs包中的其中之一就可,或者在依赖库里面使用对应的依赖即可
 
 
 
