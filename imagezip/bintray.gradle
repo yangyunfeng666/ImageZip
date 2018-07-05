@@ -1,0 +1,90 @@
+
+project.archivesBaseName = PROJ_ARTIFACTID
+
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'com.github.dcendents.android-maven'
+
+
+group = PROJ_GROUP //这个gruop很重要，参考 compile 'groupId:artifactId:version'     groupId就是这个，artifactId就是包名，version就是顶部那个
+version = PROJ_VERSION //必须有这个不然，在服务器上没有版本
+install {
+    repositories.mavenInstaller {
+        // This generates POM.xml with proper parameters
+        pom {
+            project {
+                packaging 'aar' //jar
+                // Add your description here
+                name PROJ_DESCRIPTION
+                url PROJ_WEBSITEURL
+                // Set your license
+                version PROJ_VERSION
+                licenses {
+                    license {
+                        name 'The Apache Software License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id DEVELOPER_ID //your user ID 不重要
+                        name DEVELOPER_NAME //your name 不重要
+                        email DEVELOPER_EMAIL//your email 不重要
+                    }
+                }
+                scm {
+                    connection PROJ_VCSURL
+                    developerConnection PROJ_VCSURL
+                    url PROJ_WEBSITEURL
+                }
+            }
+        }
+    }
+}
+
+// 生成jar包的task，不需要修改。
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+// 生成jarDoc的task，不需要修改。
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    // destinationDir = file("../javadoc/")
+    failOnError false // 忽略注释语法错误，如果用jdk1.8你的注释写的不规范就编译不过。
+}
+// 生成javaDoc的jar，不需要修改。
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+bintray {
+    user = properties.getProperty("BINTRAY_USER")
+    key = properties.getProperty("BINTRAY_KEY")
+    configurations = ['archives']
+    pkg {
+        repo = PROJ_REPO   //发布到Bintray的哪个仓库，这个就是第一步时你在bintray网站建立的仓库名，若这仓库不存在，则会报错
+        name = PROJ_NAME   //发布到Bintray上的名字，这个是显示在bintray仓库中的项目名字，与包名可同可不同，若仓库没有这个项目文件夹，则会自动创建
+        desc = PROJ_DESCRIPTION   //项目描述
+        websiteUrl = PROJ_WEBSITEURL
+        vcsUrl = PROJ_VCSURL
+        issueTrackerUrl = PROJ_ISSUETRACKERURL
+        licenses = [PROJ_LICENSES]
+        labels = [PROJ_LABELS]    //标签
+        publish = true
+        publicDownloadNumbers = true
+    }
+    javadoc { //jav doc采用utf-8编码否则会报“GBK的不可映射字符”错误
+        options {
+            encoding "UTF-8"
+            charSet 'UTF-8'
+        }
+    }
+}

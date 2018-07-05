@@ -1,0 +1,81 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 27
+
+
+
+    defaultConfig {
+        minSdkVersion 15
+        targetSdkVersion 27
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        externalNativeBuild {
+            cmake {
+                // Use the following syntax when passing arguments to variables:
+                // arguments "-DVAR_NAME=ARGUMENT".
+                arguments "-DANDROID_ARM_NEON=TRUE"
+                // If you're passing multiple arguments to a variable, pass them together:
+                // arguments "-DVAR_NAME=ARG_1 ARG_2"
+                // The following line passes 'rtti' and 'exceptions' to 'ANDROID_CPP_FEATURES'.
+                "-DANDROID_CPP_FEATURES=rtti exceptions"
+                //标准库
+                "-DANDROID_STL=gnustl_static"
+                //设置so
+                "-DANDROID_ABI=armeabi-v7a,armeabi"
+            }
+        }
+        ndk {
+            abiFilters "armeabi","armeabi-v7a"
+        }
+
+
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    externalNativeBuild {
+        cmake {
+//            path "CMakeLists.txt"
+        }
+    }
+
+    sourceSets {
+        main {
+            //java.srcDirs = ['src/main/java', 'src/main/java-gen']
+            //java.srcDirs = ['src/main/java']
+            //jniLibs.srcDirs = ['libs']
+            // manifest.srcFile 'AndroidManifest.xml'
+
+            java.srcDirs = ['src/main/java', 'src/main/aidl']
+            resources.srcDirs = ['src/main/java']
+            aidl.srcDirs = ['src/main/aidl']
+            renderscript.srcDirs = ['src/main/java']
+            assets.srcDirs = ['src/main/assets']
+            //配置so文件
+            jniLibs.srcDirs = ['libs']
+            jni.srcDirs = []
+        }
+
+//        instrumentTest.setRoot('tests')
+        debug.setRoot('build-types/debug')
+        release.setRoot('build-types/release')
+    }
+
+
+
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation 'com.android.support:appcompat-v7:27.1.0'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+}
